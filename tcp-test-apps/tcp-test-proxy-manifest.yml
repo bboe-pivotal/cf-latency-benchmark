@@ -1,0 +1,15 @@
+---
+applications:
+- name: tcp-client
+  path: tcp-client/target/tcp-client-0.0.1-SNAPSHOT.jar
+  random-route: true
+  services:
+  - tcp-client-server
+- name: tcp-proxy
+  path: tcp-proxy/target/tcp-proxy-0.0.1-SNAPSHOT.jar
+  no-route: true
+  services:
+  - tcp-proxy-server
+- name: tcp-server
+  path: tcp-server/target/tcp-server-0.0.1-SNAPSHOT.jar
+  no-route: true

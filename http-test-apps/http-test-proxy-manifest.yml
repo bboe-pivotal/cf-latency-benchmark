@@ -1,0 +1,15 @@
+---
+applications:
+- name: http-client
+  path: http-client/target/http-client-0.0.1-SNAPSHOT.jar
+  random-route: true
+  services:
+  - http-client-server
+- name: http-proxy
+  path: http-proxy/target/http-proxy-0.0.1-SNAPSHOT.jar
+  no-route: true
+  services:
+  - http-proxy-server
+- name: http-server
+  path: http-server/target/http-server-0.0.1-SNAPSHOT.jar
+  no-route: true
