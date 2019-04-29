@@ -112,9 +112,8 @@ public class TCPServer implements Lifecycle, Runnable {
                         logger.debug("run - End of line, disconnecting");
                         break;
                     }
-                    logger.debug("run - Received message \"" + input + "\"");
-                    logger.debug("run - Sending message back: \"pong\"");
-                    out.println("pong");
+                    logger.debug("run - Received message \"" + input + "\", returning same message");
+                    out.println(input);
                     out.flush();
                 }
                 in.close();

@@ -9,10 +9,10 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class TestWebController {
     private static Log logger = LogFactory.getLog(TestWebController.class);
-    private static final String RESULT = "Pong";
+
     @RequestMapping("/{input}")
     public String ping(@PathVariable("input") String input) {
-        logger.debug("ping(" + input+") -> " + RESULT);
-        return RESULT;
+        logger.debug("ping(" + input+") -> " + input);
+        return input;
     }
 }
