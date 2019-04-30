@@ -80,11 +80,11 @@ public class TestController {
     }
 
     private String generateTestString(int length) {
-        String result = "";
-        for(int i = 0; i < length; i++) {
-            result = result + "A";
+        char[] charResult = new char[length];
+        for(char c:charResult) {
+            c = 'A';
         }
-        return result;
+        return new String(charResult);
     }
 
     private String generateResultString(int iterations, double time) {
