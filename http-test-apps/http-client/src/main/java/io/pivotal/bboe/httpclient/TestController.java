@@ -3,7 +3,6 @@ package io.pivotal.bboe.httpclient;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -31,10 +30,10 @@ public class TestController {
     }
 
     @RequestMapping("/runtest")
-    public String newRunTest(@RequestParam(value="iterations", defaultValue="100") int iterations,
-                             @RequestParam(value="payloadsize", defaultValue="1") int payloadsize,
-                             @RequestParam(value="bigtest", defaultValue="false") boolean bigtest,
-                             @RequestParam(value="mintestruns", defaultValue="1") int mintestruns) {
+    public String runTest(@RequestParam(value="iterations", defaultValue="100") int iterations,
+                          @RequestParam(value="payloadsize", defaultValue="1") int payloadsize,
+                          @RequestParam(value="bigtest", defaultValue="false") boolean bigtest,
+                          @RequestParam(value="mintestruns", defaultValue="1") int mintestruns) {
         logger.info("Run test. Iterations: " + iterations + " Payload size: " + payloadsize + " Big test: " + bigtest + " Minimum test runs: " + mintestruns);
 
         String requestURL = serverUrl + "/" + generateTestString(payloadsize);
