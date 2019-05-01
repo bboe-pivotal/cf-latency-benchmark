@@ -56,6 +56,7 @@ public class TestController {
         return "Usage: curl <test-app-url>/runtest \\" +
                 "\n-d iterations=1000 \\" +
                 "\n-d payloadsize=1 \\" +
+                "\n-d reuseconnections=true \\" +
                 "\n-d bigtest=false \\" +
                 "\n-d mintestruns=1";
     }
@@ -63,9 +64,10 @@ public class TestController {
     @RequestMapping("/runtest")
     public String runTest(@RequestParam(value="iterations", defaultValue="100") int iterations,
                           @RequestParam(value="payloadsize", defaultValue="1") int payloadsize,
+                          @RequestParam(value="reuseconnections", defaultValue="true") boolean reuseconnections,
                           @RequestParam(value="bigtest", defaultValue="false") boolean bigtest,
                           @RequestParam(value="mintestruns", defaultValue="1") int mintestruns) {
-        logger.info("Run test. Iterations: " + iterations + " Payload size: " + payloadsize + " Big test: " + bigtest + " Minimum test runs: " + mintestruns);
+        logger.info("Run test. Iterations: " + iterations + " Payload size: " + payloadsize + " Reuse connections: "+reuseconnections+" Big test: " + bigtest + " Minimum test runs: " + mintestruns);
 
         String result = null;
         String testString = generateTestString(payloadsize);
@@ -75,7 +77,7 @@ public class TestController {
             int testCounter = 0;
             while(true) {
                 logger.info("Run test #" + testCounter);
-                double newResult = runSingleTest(iterations, testString);
+                double newResult = runSingleTest(iterations, testString, reuseconnections);
                 logger.info("Test time: " + String.format("%1$,.2f", newResult) + "ms");
 
                 testCounter++;
@@ -113,21 +115,38 @@ public class TestController {
         return new String(charResult);
     }
 
-    public double runSingleTest(int iterations, String testString) throws IOException {
+    public double runSingleTest(int iterations, String testString, boolean reuseConnections) throws IOException {
         logger.info("Connecting to " + serverAddress + " on port " + serverPort);
-        Socket clientSocket = getNewClientSocket();
-        PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
-        BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+        Socket clientSocket = null;
+        PrintWriter out = null;
+        BufferedReader in = null;
+        if(reuseConnections) {
+            clientSocket = getNewClientSocket();
+            out = new PrintWriter(clientSocket.getOutputStream(), true);
+            in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+        }
 
         SimpleTimer t = new SimpleTimer();
         logger.info("Starting");
         for(int i = 0; i < iterations; i++) {
+            if(!reuseConnections) {
+                clientSocket = getNewClientSocket();
+                out = new PrintWriter(clientSocket.getOutputStream(), true);
+                in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+            }
             doRunTest(out, in, testString);
+            if(!reuseConnections) {
+                out.close();
+                in.close();
+                clientSocket.close();
+            }
         }
         double result = t.getTime();
-        out.close();
-        in.close();
-        clientSocket.close();
+        if(reuseConnections) {
+            out.close();
+            in.close();
+            clientSocket.close();
+        }
         return result;
     }
 

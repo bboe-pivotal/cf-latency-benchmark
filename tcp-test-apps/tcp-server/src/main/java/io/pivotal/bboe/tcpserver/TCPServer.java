@@ -33,7 +33,7 @@ public class TCPServer implements Lifecycle, Runnable {
 
     @Override
     public void run() {
-        logger.info("Start TCP Server");
+        logger.info("Start TCP Server on port " + listenPort);
         while(isRunning.get()) {
             try {
                 doRun();
